@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline AgroData — Documentación</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <h1>Pipeline AgroData</h1>
+            <p class="subtitle">Sistema de Procesamiento ETL para Agricultura de Precisión</p>
+        </div>
+    </header>
+
+    <nav class="toc">
+        <div class="container">
+            <ul>
+                <li><a href="#overview">Resumen</a></li>
+                <li><a href="#architecture">Arquitectura</a></li>
+                <li><a href="#stages">Etapas del Pipeline</a></li>
+                <li><a href="#indicators">Indicadores Técnicos</a></li>
+                <li><a href="#installation">Instalación</a></li>
+                <li><a href="#usage">Uso</a></li>
+                <li><a href="#repo">Estructura del Repositorio</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="overview">
+            <h2>Resumen</h2>
+            <p>
+                <strong>Pipeline AgroData</strong> es una solución de código abierto que simula un pipeline ETL
+                (Extract, Transform, Load) para la gestión de datos de <strong>Agricultura de Precisión</strong>.
+                Procesa datos geoespaciales de sensores — NDVI, humedad del suelo, humedad ambiental y temperatura —
+                para generar reportes de salud vegetal y mapas temáticos.
+            </p>
+            <p>
+                El pipeline está diseñado para fundos agrícolas que buscan optimizar recursos hídricos,
+                detectar estrés vegetal temprano y soportar la toma de decisiones basada en datos geoespaciales.
+            </p>
+        </section>
+
+        <section id="architecture">
+            <h2>Arquitectura del Pipeline</h2>
+            <div class="pipeline-diagram">
+                <div class="stage">
+                    <span class="stage-num">1</span>
+                    <h3>Ingesta de Datos</h3>
+                    <p>Generación de lotes poligonales simulados con datos de sensores. Introducción controlada de nulos y anomalías.</p>
+                </div>
+                <div class="stage-arrow">→</div>
+                <div class="stage">
+                    <span class="stage-num">2</span>
+                    <h3>Limpieza y Procesamiento</h3>
+                    <p>Conversión de tipos, filtrado de anomalías, imputación de nulos (mediana), cálculo del SVC.</p>
+                </div>
+                <div class="stage-arrow">→</div>
+                <div class="stage">
+                    <span class="stage-num">3</span>
+                    <h3>Análisis Geoespacial</h3>
+                    <p>Re-proyección UTM, zonificación Norte/Sur, agrupación por estrés hídrico, métricas promedio.</p>
+                </div>
+                <div class="stage-arrow">→</div>
+                <div class="stage">
+                    <span class="stage-num">4</span>
+                    <h3>Visualización</h3>
+                    <p>Generación de mapa temático coloreado por estado de salud con etiquetas y leyenda.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="stages">
+            <h2>Etapas del Pipeline</h2>
+
+            <h3>1. Función: <code>generar_datos_ficticios()</code></h3>
+            <p>Simula la captura de datos de sensores IoT distribuidos en un fundo agrícola. Genera un <code>GeoDataFrame</code>
+               con 15 lotes poligonales irregulares y datos de sensores.</p>
+            <table>
+                <tr><th>Columna</th><th>Descripción</th><th>Rango</th></tr>
+                <tr><td><code>lote_id</code></td><td>Identificador único del lote</td><td>L001–L015</td></tr>
+                <tr><td><code>campana</code></td><td>Temporada de siembra</td><td>Primavera/Verano/Otoño/Invierno</td></tr>
+                <tr><td><code>ndvi</code></td><td>Índice de vegetación</td><td>[0.1, 0.95]</td></tr>
+                <tr><td><code>humedad_suelo</code></td><td>Humedad del suelo (%)</td><td>[5, 45]</td></tr>
+                <tr><td><code>humedad_amb</code></td><td>Humedad ambiental (%)</td><td>[20, 80]</td></tr>
+                <tr><td><code>temperatura</code></td><td>Temperatura (°C)</td><td>[15, 40]</td></tr>
+                <tr><td><code>geometry</code></td><td>Polígono del lote</td><td>Polygon (EPSG:4326)</td></tr>
+            </table>
+
+            <h3>2. Función: <code>limpiar_y_procesar(df)</code></h3>
+            <p>Aplica transformaciones de calidad de datos en 6 pasos:</p>
+            <ol>
+                <li><strong>Conversión de tipos</strong>: Coerción de valores no numéricos a <code>NaN</code></li>
+                <li><strong>Clasificación de estrés hídrico</strong>: Basada en humedad relativa al valor ideal (25%)</li>
+                <li><strong>Filtrado de anomalías</strong>: Rango físico válido (NDVI ∈ [0, 1], humedad ∈ [0, 60], temp ≤ 50°C)</li>
+                <li><strong>Imputación</strong>: Mediana de cada variable para preservar la distribución</li>
+                <li><strong>Cálculo del SVC</strong>: Índice combinado de salud vegetal</li>
+                <li><strong>Categorización</strong>: Estado cualitativo (Saludable/Moderada/Estrés)</li>
+            </ol>
+
+            <h3>3. Función: <code>analizar_geoespacial(df)</code></h3>
+            <p>Realiza análisis geoespacial con re-proyección a UTM Zona 19S para cálculos precisos:</p>
+            <ul>
+                <li><strong>Re-proyección</strong>: EPSG:4326 → EPSG:32719 (UTM Zona 19S)</li>
+                <li><strong>Zonificación</strong>: Mediana de coordenadas Y de centroides → Norte/Sur</li>
+                <li><strong>Agrupación</strong>: Resumen estadístico por zona y estrés hídrico</li>
+            </ul>
+            <p><strong>¿Por qué CRS proyectado?</strong> Las coordenadas geográficas (grados decimales) no
+               corresponden a una distancia lineal. El cálculo de centroides, áreas y distancias requiere
+               una unidad de medida consistente (metros en UTM).</p>
+
+            <h3>4. Función: <code>visualizar(df)</code></h3>
+            <p>Genera un mapa temático (<code>mapa_salud_vegetal.png</code>) coloreando los lotes según
+               su estado de salud:</p>
+            <table>
+                <tr><th>Estado</th><th>Color</th><th>Condición</th></tr>
+                <tr><td>Saludable</td><td><span class="color-box" style="background:#2ca02c"></span></td><td>NDVI ≥ 0.7 y estrés bajo</td></tr>
+                <tr><td>Moderada</td><td><span class="color-box" style="background:#ff7f0e"></span></td><td>NDVI ≥ 0.5 y estrés no alto</td></tr>
+                <tr><td>Estrés</td><td><span class="color-box" style="background:#d62728"></span></td><td>No cumple criterios anteriores</td></tr>
+                <tr><td>Desconocida</td><td><span class="color-box" style="background:#7f7f7f"></span></td><td>NDVI nulo</td></tr>
+            </table>
+        </section>
+
+        <section id="indicators">
+            <h2>Indicadores Técnicos</h2>
+
+            <h3>NDVI — Índice de Vegetación de Diferencia Normalizada</h3>
+            <p>Medida espectral de la salud vegetal basada en la reflectancia infrarroja y visible.</p>
+            <table>
+                <tr><th>Rango</th><th>Interpretación</th></tr>
+                <tr><td>0.0 – 0.3</td><td>Vegetación escasa / suelo desnudo</td></tr>
+                <tr><td>0.3 – 0.6</td><td>Vegetación moderada / en crecimiento</td></tr>
+                <tr><td>0.6 – 0.9</td><td>Vegetación densa / saludable</td></tr>
+            </table>
+
+            <h3>Estrés Hídrico</h3>
+            <p>Clasificación basada en la humedad del suelo relativa al valor ideal (25%):</p>
+            <table>
+                <tr><th>Clase</th><th>Condición</th><th>Umbral</th></tr>
+                <tr><td><strong>Alto</strong></td><td>Humedad &lt; 60% del ideal</td><td>&lt; 15%</td></tr>
+                <tr><td><strong>Moderado</strong></td><td>Humedad 60–85% del ideal</td><td>15–21.25%</td></tr>
+                <tr><td><strong>Bajo</strong></td><td>Humedad ≥ 85% del ideal</td><td>≥ 21.25%</td></tr>
+            </table>
+
+            <h3>Índice de Salud Vegetal Combinado (SVC)</h3>
+            <div class="formula">
+                <code>SVC = 0.5 × NDVI + 0.3 × (1 − Estres_Hidr) + 0.2 × (Humedad_suelo / 50)</code>
+            </div>
+            <table>
+                <tr><th>Peso</th><th>Componente</th><th>Justificación</th></tr>
+                <tr><td>50%</td><td>NDVI</td><td>Métrica directa de biomasa y vigor fotosintético</td></tr>
+                <tr><td>30%</td><td>Estrés hídrico</td><td>Inverso del estrés; la sequía es el factor limitante principal</td></tr>
+                <tr><td>20%</td><td>Humedad del suelo</td><td>Contribución directa al desarrollo radicular y nutrición</td></tr>
+            </table>
+            <p>El resultado está normalizado en [0, 1], donde valores &gt; 0.6 indican vigor óptimo.</p>
+        </section>
+
+        <section id="installation">
+            <h2>Instalación</h2>
+            <pre><code>python -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+
+pip install -r requirements.txt</code></pre>
+        </section>
+
+        <section id="usage">
+            <h2>Uso</h2>
+            <p>Ejecutar el pipeline:</p>
+            <pre><code>python pipeline_agricola.py</code></pre>
+            <p>Salida esperada:</p>
+            <ul>
+                <li><strong>Consola</strong>: Registro de eventos con logging (INFO/ERROR)</li>
+                <li><strong>Archivo</strong>: <code>mapa_salud_vegetal.png</code> — mapa temático de salud</li>
+                <li><strong>Resumen</strong>: Tabla de métricas por zona y estrés hídrico</li>
+            </ul>
+        </section>
+
+        <section id="repo">
+            <h2>Estructura del Repositorio</h2>
+<pre><code>pipeline-agrodata/
+├── pipeline_agricola.py     # Script principal del pipeline ETL
+├── requirements.txt         # Dependencias con versiones
+├── README.md                # Documentación completa
+├── docs/
+│   ├── index.html           # Esta página web de documentación
+│   ├── styles.css           # Estilos CSS
+│   └── images/              # Imágenes de soporte
+└── mapa_salud_vegetal.png   # Output generado</code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Pipeline AgroData — Ingeniería de Datos Geoespaciales</p>
+        </div>
+    </footer>
+</body>
+</html>

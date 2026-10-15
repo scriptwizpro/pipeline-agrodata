@@ -1,0 +1,11 @@
+# Core
+numpy>=2.0,<3.0
+pandas>=2.2,<3.0
+
+# Geospatial
+geopandas>=1.0,<2.0
+shapely>=2.0,<3.0
+pyproj>=3.6,<4.0
+
+# Visualization
+matplotlib>=3.9,<4.0

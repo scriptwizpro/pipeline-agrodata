@@ -1,0 +1,281 @@
+/* ===== Estilos globales ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f8f9fa;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===== Hero ===== */
+.hero {
+    background: linear-gradient(135deg, #1a7f37 0%, #2ca55f 50%, #40a040 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.hero .subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* ===== Navegación ===== */
+nav.toc {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav.toc .container {
+    display: flex;
+    justify-content: center;
+}
+
+nav.toc ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    padding: 15px 0;
+}
+
+nav.toc a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+nav.toc a:hover {
+    color: #1a7f37;
+}
+
+/* ===== Secciones ===== */
+section {
+    background: white;
+    margin: 30px 0;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+section h2 {
+    color: #1a7f37;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #2ca55f;
+    padding-bottom: 10px;
+}
+
+section h3 {
+    color: #2d6a3f;
+    font-size: 1.3rem;
+    margin: 25px 0 15px;
+}
+
+section h3 code {
+    background: #e8f5e9;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 1.1rem;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+code {
+    background: #e8f5e9;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+/* ===== Diagrama de pipeline ===== */
+.pipeline-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.stage {
+    background: #e8f5e9;
+    border: 2px solid #2ca55f;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    min-width: 180px;
+    flex: 1;
+}
+
+.stage-num {
+    display: inline-block;
+    background: #2ca55f;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.stage h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #1a7f37;
+}
+
+.stage p {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.stage-arrow {
+    font-size: 1.8rem;
+    color: #2ca55f;
+    font-weight: bold;
+}
+
+/* ===== Tablas ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+th {
+    background: #2d6a3f;
+    color: white;
+    padding: 10px 15px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+}
+
+tr:nth-child(even) {
+    background: #f5f5f5;
+}
+
+tr:hover {
+    background: #e8f5e9;
+}
+
+/* ===== Fórmula ===== */
+.formula {
+    background: #1a237e;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.formula code {
+    font-size: 1.3rem;
+    background: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+/* ===== Color boxes ===== */
+.color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+/* ===== Listas ===== */
+ol, ul {
+    margin: 15px 0;
+    padding-left: 30px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* ===== Footer ===== */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+footer .container p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    nav.toc ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pipeline-diagram {
+        flex-direction: column;
+    }
+
+    .stage {
+        min-width: 100%;
+    }
+
+    section {
+        padding: 25px 15px;
+    }
+}
